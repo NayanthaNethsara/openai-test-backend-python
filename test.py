@@ -2,6 +2,30 @@ from flask import Flask, request, jsonify, send_file
 from PIL import Image, ImageDraw, ImageFont
 from gtts import gTTS
 import os
+from openai import OpenAI
+import os
+from dotenv import load_dotenv
+
+
+load_dotenv()
+api_key = os.getenv("OPENAI_API_KEY")
+
+client = OpenAI(api_key=api_key)
+
+# OpenAI Text to Image (this is not working due to API restrictions)
+
+
+def openai_text_image(text):
+    response = client.images.generate(
+        model="dall-e-3",
+        prompt=text,
+        size="1024x1024",
+        quality="standard",
+        n=1,
+    )
+    image_url = response.data[0].url
+    return image_url
+
 
 app = Flask(__name__)
 
@@ -16,6 +40,7 @@ def home():
 def text_to_image():
     data = request.json
     text = data.get('text', 'Hello World!')
+    # img = openai_text_image(text)
     img = Image.new('RGB', (500, 300), color=(73, 109, 137))
     draw = ImageDraw.Draw(img)
     font = ImageFont.load_default()
